@@ -1,12 +1,13 @@
+import os
 import cv2
 import numpy as np
 from time import time
 from urllib.request import urlopen
 from argparse import ArgumentParser
 
-BODY_DETECTOR = '/home/kopita/anaconda3/envs/tf/share/OpenCV/haarcascades/haarcascade_fullbody.xml'
-FACE_DETECTOR = '/home/kopita/anaconda3/envs/tf/share/OpenCV/haarcascades/haarcascade_frontalface_default.xml'
-EYE_DETECTOR = '/home/kopita/anaconda3/envs/tf/share/OpenCV/haarcascades/haarcascade_eye.xml'
+BODY_DETECTOR = os.path.join(os.environ['CONDA_PREFIX'], 'share/OpenCV/haarcascades/haarcascade_fullbody.xml')
+FACE_DETECTOR = os.path.join(os.environ['CONDA_PREFIX'], 'share/OpenCV/haarcascades/haarcascade_frontalface_default.xml')
+EYE_DETECTOR = os.path.join(os.environ['CONDA_PREFIX'], 'share/OpenCV/haarcascades/haarcascade_eye.xml')
 
 def show_frame(image, scaleFactor, minNeighbors):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)

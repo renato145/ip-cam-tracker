@@ -1,22 +1,20 @@
+import os
 import cv2
-import dlib
 import numpy as np
 from time import time
 from urllib.request import urlopen
 from argparse import ArgumentParser
 
-face_detector = dlib.get_frontal_face_detector()
+FACE_DETECTOR = os.path.join(os.environ['CONDA_PREFIX'], 'share/OpenCV/haarcascades/haarcascade_frontalface_default.xml')
 
 def show_frame(image, scaleFactor, minNeighbors):
-    dlib_img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    detected_faces = face_detector(dlib_img, 0)
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    face_detector = cv2.CascadeClassifier(FACE_DETECTOR)
 
     # Faces
-    for i, face_rect in enumerate(detected_faces):
-        cv2.rectangle(image,
-                      (face_rect.left(), face_rect.top()),
-                      (face_rect.right(), face_rect.bottom()),
-                      (0, 255, 0), 2)
+    boxes_face = face_detector.detectMultiScale(gray, scaleFactor=scaleFactor, minNeighbors=minNeighbors)
+    for (x,y,w,h) in boxes_face:
+        cv2.rectangle(image, (x,y), (x+w,y+h), (0, 255, 0), 2)
 
     cv2.imshow('Ip-cam', image)
 
@@ -25,8 +23,8 @@ def build_parser():
     parser.add_argument('-ip', metavar='xxx.xxx.xxx.xxx',
                         help='ip-cam server address',
                         default='192.168.0.28:8080')
-    parser.add_argument('-scaleFactor', default=1.1)
-    parser.add_argument('-minNeighbors', default=4)
+    parser.add_argument('-scaleFactor', default=1.5)
+    parser.add_argument('-minNeighbors', default=5)
     return parser
 
 if __name__ == '__main__':
@@ -45,7 +43,7 @@ if __name__ == '__main__':
     bytes = b''
     while True:
         t0 = time()
-        bytes += stream.read(1024)
+        bytes += stream.read(16 * 1024)
         a = bytes.find(b'\xff\xd8')
         b = bytes.find(b'\xff\xd9')
         if a!=-1 and b!=-1:
