@@ -52,7 +52,7 @@ if __name__ == '__main__':
             jpg = bytes[a:b+2]
             bytes= bytes[b+2:]
             image = cv2.imdecode(np.fromstring(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
-            boxes = show_frame(image, scaleFactor, minNeighbors)
+            show_frame(image, scaleFactor, minNeighbors)
             fps = int(1 / (time() - t0))
             print('FPS = %d' % fps, end='\r')
 
